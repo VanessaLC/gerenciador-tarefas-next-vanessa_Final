@@ -44,3 +44,5 @@ const jwtValidator = (handler : NextApiHandler) =>
 
     return handler(req, res);
 }
+
+export default jwtValidator;
