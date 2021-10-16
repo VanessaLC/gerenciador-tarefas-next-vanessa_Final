@@ -1,5 +1,6 @@
 import type { NextPage } from 'next'
 import { useState } from 'react'
+import { Modal } from 'react-bootstrap';
 import { executeRequest } from '../services/api';
 import { AccessTokenProps } from '../types/AccessTokenProps';
 
@@ -27,7 +28,7 @@ const Login: NextPage<AccessTokenProps> = ({
         login,
         password
       }
-
+      
       const result = await executeRequest('login', 'POST', body);
       
       setMsgErro('');
@@ -51,7 +52,53 @@ const Login: NextPage<AccessTokenProps> = ({
     setLoading(false);
   }
 
+  const [showModal, setShowModal] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [passwordInitial, setPasswordInitial] = useState('');
+
+  const doRegisterUser = async (e : any) =>{
+    try{
+      setLoading(true);
+      e.preventDefault();
+      
+      if(!email || !name || !passwordInitial){
+        setMsgErro('Favor preencher email, nome e senha');
+        setLoading(false);
+        return;
+      }
+
+      const body = {
+        name,
+        email,
+        passwordInitial
+      }
+
+      await executeRequest('user', 'POST', body);
+      closeModal();
+    }catch(e : any){
+      console.log(e);
+      if(e?.response?.data?.error){
+        setMsgErro(e?.response?.data?.error);
+      }else{
+        setMsgErro('Ocorreu erro ao alterar tarefa tente novamente!');
+      }
+    }
+
+    setLoading(false);
+  }
+
+  const closeModal = () => {
+    setName('');
+    setPasswordInitial('');
+    setEmail('');
+    setLoading(false);
+    setMsgErro('');
+    setShowModal(false);
+  }
+
   return (
+    <>
     <div className="container-login">
       <img src="/logo.svg" alt="Logo Fiap" className="logo"/>
       <form>
@@ -67,9 +114,48 @@ const Login: NextPage<AccessTokenProps> = ({
             value={password} onChange={e => setPassword(e.target.value)}/>
         </div>
         <button className={isLoading ? "disabled" : ""} type="button" onClick={doLogin} disabled={isLoading}>{isLoading ? "...Carregando" : "Login"}</button>
+        <button className={isLoading ? "disabled" : ""} type="button" onClick={() => setShowModal(true)} disabled={isLoading}>{isLoading ? "...Carregando" : "Cadastre-se"}</button>
       </form>
     </div>
+
+    <Modal show={showModal}
+        onHide={() => closeModal()}
+        className="container-modal">
+          <Modal.Body>
+              <p>Faça seu cadastro</p>
+              {msgErro && <p className="error">{msgErro}</p>}
+              <input type="text"
+                placeholder="Nome"
+                value={name}
+                onChange={e => setName(e.target.value)}/>
+              <input type={"text"}
+                placeholder="Email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}/>
+              <input type={"text" }
+                placeholder="Senha"
+                value={passwordInitial}
+                onChange={e => setPasswordInitial(e.target.value)}/>
+          </Modal.Body>
+          <Modal.Footer>
+              <div className="button col-12">
+                  <button
+                    onClick={doRegisterUser}
+                    disabled={isLoading}
+                    >{isLoading ? "...Enviando dados" : "Salvar cadastro"}</button>
+                  <span onClick={closeModal}>Cancelar</span>
+              </div>
+          </Modal.Footer>
+      </Modal>
+
+    </>
+
+
+
+
+
+
   )
 }
 
-export { Login }
+export { Login }  
