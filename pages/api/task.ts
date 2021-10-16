@@ -6,6 +6,7 @@ import { Task } from '../../types/Task';
 import { TaskModel } from '../../models/TaskModel';
 import { UserModel } from '../../models/UserModel';
 import { GetTasksQueryParams } from '../../types/GetTasksQueryParams';
+import moment from 'moment';
 
 const handler = async(req:NextApiRequest, res:NextApiResponse<DefaultResponseMsg | Task[]>) =>{
     try{
@@ -146,7 +147,7 @@ const saveTask = async(req:NextApiRequest, res:NextApiResponse<DefaultResponseMs
             return res.status(400).json({ error: 'Nome da tarefa invalida'});
         }
 
-        if(!task.finishPrevisionDate || new Date(task.finishPrevisionDate).getDate() < new Date().getDate()){
+        if(!task.finishPrevisionDate || moment(task.finishPrevisionDate).isBefore(moment())){
             return res.status(400).json({ error: 'Data de previsao invalida ou menor que hoje'});
         }
 
