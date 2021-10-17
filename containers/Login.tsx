@@ -55,14 +55,13 @@ const Login: NextPage<AccessTokenProps> = ({
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [passwordInitial, setPasswordInitial] = useState('');
 
   const doRegisterUser = async (e : any) =>{
     try{
       setLoading(true);
       e.preventDefault();
       
-      if(!email || !name || !passwordInitial){
+      if(!email || !name || !password){
         setMsgErro('Favor preencher email, nome e senha');
         setLoading(false);
         return;
@@ -71,12 +70,13 @@ const Login: NextPage<AccessTokenProps> = ({
       const bodyRegister = {
         name,
         email,
-        passwordInitial 
+        password
       }
-      
+
       console.log(bodyRegister);
 
       await executeRequest('user', 'POST', bodyRegister);
+      
       closeModal();
     }catch(e : any){
       console.log(e);
@@ -92,7 +92,7 @@ const Login: NextPage<AccessTokenProps> = ({
 
   const closeModal = () => {
     setName('');
-    setPasswordInitial('');
+    setPassword('');
     setEmail('');
     setLoading(false);
     setMsgErro('');
@@ -136,8 +136,8 @@ const Login: NextPage<AccessTokenProps> = ({
                 onChange={e => setEmail(e.target.value)}/>
               <input type={"text" }
                 placeholder="Senha"
-                value={passwordInitial}
-                onChange={e => setPasswordInitial(e.target.value)}/>
+                value={password}
+                onChange={e => setPassword(e.target.value)}/>
           </Modal.Body>
           <Modal.Footer>
               <div className="button col-12">
