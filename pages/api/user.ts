@@ -3,7 +3,7 @@ import {Login} from '../../types/Login';
 import {DefaultResponseMsg} from '../../types/DefaultResponseMsg';
 import { User } from '../../types/User';
 import connectDB from '../../middlewares/connectDB';
-import md5 from 'md5';
+//import md5 from 'md5';
 import { UserModel } from '../../models/UserModel';
 
 const handler = async (req : NextApiRequest, res : NextApiResponse<DefaultResponseMsg>) => {
@@ -26,11 +26,11 @@ const handler = async (req : NextApiRequest, res : NextApiResponse<DefaultRespon
                 return;
             }
 
-            var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
-            if(!strongRegex.test(user.password)){
-                res.status(400).json({ error: 'Senha do usuario invalida'});
-                return;
-            }
+            //var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+            //if(!strongRegex.test(user.password)){
+            //    res.status(400).json({ error: 'Senha do usuario invalida'});
+            //    return;
+           // }
 
             const existingUser = await UserModel.find({email : user.email});
             if(existingUser && existingUser.length > 0){
@@ -40,7 +40,7 @@ const handler = async (req : NextApiRequest, res : NextApiResponse<DefaultRespon
 
             const final = {
                 ...user,
-                password : md5(user.password)
+                password : user.password
             }
 
             await UserModel.create(user);

@@ -68,13 +68,15 @@ const Login: NextPage<AccessTokenProps> = ({
         return;
       }
 
-      const body = {
+      const bodyRegister = {
         name,
         email,
-        passwordInitial
+        passwordInitial 
       }
+      
+      console.log(bodyRegister);
 
-      await executeRequest('user', 'POST', body);
+      await executeRequest('user', 'POST', bodyRegister);
       closeModal();
     }catch(e : any){
       console.log(e);
